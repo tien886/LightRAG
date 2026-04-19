@@ -10,5 +10,5 @@ UIT_BUDDY_BASE_URL: str = os.getenv("UIT_BUDDY_BASE_URL")
 UIT_BUDDY_TIMEOUT: int = int(os.getenv("UIT_BUDDY_TIMEOUT", "30"))
 
 # Server
-SERVER_HOST: str = os.getenv("SERVER_HOST", "0.0.0.0")
+SERVER_HOST: str = os.getenv("SERVER_HOST", "127.0.0.1")
 SERVER_PORT: int = int(os.getenv("SERVER_PORT", "8000"))
