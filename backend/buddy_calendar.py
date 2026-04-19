@@ -1,8 +1,8 @@
 """Calendar & Schedule service — wraps /api/schedule endpoints."""
 from __future__ import annotations
 
-from client.BuddyClient import UITBuddyClient
-from exception.BuddyException import BackendAPIError
+from client.buddy_client import UITBuddyClient
+from exception.buddy_exception import BackendAPIError
 
 # ---------------------------------------------------------------------------
 # Deadlines

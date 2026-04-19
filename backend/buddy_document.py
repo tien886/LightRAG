@@ -1,8 +1,8 @@
 """Document service — wraps /api/document endpoints."""
 from __future__ import annotations
 
-from client.BuddyClient import UITBuddyClient
-from exception.BuddyException import BackendAPIError
+from client.buddy_client import UITBuddyClient
+from exception.buddy_exception import BackendAPIError
 
 async def get_folder(
     client: UITBuddyClient,
