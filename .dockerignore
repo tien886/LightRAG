@@ -1,0 +1,53 @@
+# ── Git ─────────────────────────────────────────────────────────────────
+.git
+.gitignore
+.gitattributes
+
+# ── Virtual env ─────────────────────────────────────────────────────────
+.venv
+venv/
+env/
+.env
+
+# ── Python artifacts ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── IDE ──────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# ── Test artifacts ───────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.tox/
+.nox/
+
+# ── LightRAG working dir ─────────────────────────────────────────────────
+# Exclude existing rag_working content (images bind-mount it at runtime)
+rag_working/
+# Keep the directory structure but don't ship data
+# (after first run, data is populated via /api/rag/seed)
+
+# ── Documentation ────────────────────────────────────────────────────────
+*.md
+!requirements.txt   # ← keep requirements.txt
+AI policies.md
+
+# ── Claude Code internals ────────────────────────────────────────────────
+.claude/
