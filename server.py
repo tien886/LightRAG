@@ -1,5 +1,6 @@
 """FastAPI server — exposes UIT Buddy Backend APIs to BuddyAI."""
 from __future__ import annotations
+from fastapi.responses import RedirectResponse
 
 from typing import Annotated
 
@@ -7,15 +8,22 @@ from fastapi import FastAPI, Header, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from config.AppConfig import SERVER_HOST, SERVER_PORT
-from service.backend.BuddyService import get_buddy_service 
-from client.BuddyClient import UITBuddyClient
-from exception.BuddyException import BackendAPIError
+from config.app_config import SERVER_HOST, SERVER_PORT
+from service.backend.buddy_service import get_buddy_service
+from client.buddy_client import UITBuddyClient
+from exception.buddy.buddy_exception import BackendAPIError
+
+from controller.chat_controller import router as chat_router
+from controller.rag_controller import router as rag_router
+
 app = FastAPI(
-    title="BuddyAI — UIT Buddy Backend Proxy",
-    description="Proxies authenticated requests to UIT Buddy Backend for BuddyAI.",
+    title="BuddyAI — UIT Buddy Backend Proxy + RAG",
+    description="Proxies authenticated requests to UIT Buddy Backend and provides academic RAG.",
     version="1.0.0",
 )
+
+app.include_router(chat_router)
+app.include_router(rag_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,14 +51,14 @@ def validate_token(authorization: str) -> str:
 
     return token
 
+@app.get("/")
+async def root():
+    return RedirectResponse("/docs")
 
-# ---------------------------------------------------------------------------
-# /schedule — deadlines & calendar
-# ---------------------------------------------------------------------------
 
 @app.get("/api/schedule/deadline")
 async def get_deadlines(
-    authorization: str ,
+    authorization: str | None = Header(default=None),
     page: int = 1,
     limit: int = 15,
     sortType: str = "desc",
@@ -60,6 +68,7 @@ async def get_deadlines(
 ):
     print(authorization)
     token = validate_token(authorization)
+    print("LLM calling get deadlines")
     try:
         return await get_buddy_service ().get_deadlines(
             token=token,
@@ -71,17 +80,18 @@ async def get_deadlines(
             year=year,
         )
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
 @app.post("/api/schedule/deadline")
 async def create_deadline(
-    authorization: str,
+    authorization: str | None = Header(default=None),
     exerciseName: str = "",
     classCode: str = "",
     dueDate: str = "",
 ):
     token = validate_token(authorization)
+    print("LLM calling create deadlines")
     try:
         return await get_buddy_service ().create_deadline(
             token=token,
@@ -90,12 +100,12 @@ async def create_deadline(
             dueDate=dueDate,
         )
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
 @app.get("/api/schedule/calendar")
 async def get_calendar(
-    authorization: str,
+    authorization: str | None = Header(default=None),
     year: str = "",
     semester: str = "",
 ):
@@ -107,31 +117,26 @@ async def get_calendar(
             semester=semester,
         )
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
-# ---------------------------------------------------------------------------
-# /user
-# ---------------------------------------------------------------------------
 
 @app.get("/api/user/me")
 async def get_user_me(
-    authorization: str,
+    authorization: str | None = Header(default=None),
 ):
     token = validate_token(authorization)
+    print("LLM calling get user")
     try:
         return await get_buddy_service ().get_user_profile(token=token)
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
-# ---------------------------------------------------------------------------
-# /document
-# ---------------------------------------------------------------------------
 
 @app.get("/api/document/folder")
 async def get_folder(
-    authorization: str,
+    authorization: str | None = Header(default=None),
     folderId: str = "",
     page: int = 1,
     limit: int = 15,
@@ -139,6 +144,7 @@ async def get_folder(
     sortBy: str = "createdAt",
 ):
     token = validate_token(authorization)
+    print("LLM calling get folder")
     try:
         return await get_buddy_service ().get_folder(
             token=token,
@@ -149,12 +155,12 @@ async def get_folder(
             sortBy=sortBy,
         )
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
 @app.get("/api/document/search")
 async def search_documents(
-    authorization: str ,
+    authorization: str | None = Header(default=None),
     keyword: str = "",
     page: int = 1,
     limit: int = 15,
@@ -162,6 +168,7 @@ async def search_documents(
     sortBy: str = "createdAt",
 ):
     token = validate_token(authorization)
+    print("LLM calling search documents")
     try:
         return await get_buddy_service ().search_documents(
             token=token,
@@ -172,15 +179,16 @@ async def search_documents(
             sortBy=sortBy,
         )
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
 @app.get("/api/document/download/{fileId}")
 async def download_document(
-    authorization: str,
+    authorization: str | None = Header(default=None),
     fileId: str = "",
 ):
     token = validate_token(authorization)
+    print("LLM calling download document")
     try:
         content = await get_buddy_service ().download_document(
             token=token,
@@ -192,12 +200,9 @@ async def download_document(
             headers={"Content-Disposition": f'attachment; filename="{fileId}"'},
         )
     except BackendAPIError as e:
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise HTTPException(status_code=e.status_code, detail={"code": e.code, "message": e.detail})
 
 
-# ---------------------------------------------------------------------------
-# Health check
-# ---------------------------------------------------------------------------
 
 @app.get("/health")
 async def health():
@@ -208,9 +213,6 @@ async def health():
     return {"status": "ok"}
 
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     import uvicorn
