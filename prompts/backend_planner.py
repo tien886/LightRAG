@@ -293,7 +293,7 @@ Output:
       "body": {{
         "exerciseName": "AI report",
         "classCode": "",
-        "dueDate": "resolved from today's date at 17:00:00"
+        "dueDate": "2026-05-02T17:00:00"
       }}
     }}
   ],
