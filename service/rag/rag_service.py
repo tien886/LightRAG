@@ -165,7 +165,18 @@ class RagService:
                 )
             except BackendAPIError as exc:
                 context["errors"].append(f"deadline_error: {exc.status_code} {exc.detail}")
-
+        if BackendEndpoint.SCHEDULE_DEADLINE_CREATE.value in endpoint_map:
+            try:
+                params = endpoint_map[BackendEndpoint.SCHEDULE_DEADLINE_CREATE.value].get("query_params", {})
+                context["deadline"] = await buddy_service.create_deadline(
+                    token=token,
+                    exerciseName=params.get("exerciseName"),
+                    classCode=params.get("classCode"),
+                    dueDate=params.get("dueDate"),
+                )
+            except BackendAPIError as exc:
+                context["errors"].append(f"deadline_error: {exc.status_code} {exc.detail}")
+        
         if BackendEndpoint.SCHEDULE_CALENDAR.value in endpoint_map:
             try:
                 params = endpoint_map[BackendEndpoint.SCHEDULE_CALENDAR.value].get("query_params", {})
@@ -204,6 +215,17 @@ class RagService:
                 )
             except BackendAPIError as exc:
                 context["errors"].append(f"document_error: {exc.status_code} {exc.detail}")
+        
+        if BackendEndpoint.DOCUMENT_DOWNLOAD.value in endpoint_map:
+            try:
+                params = endpoint_map[BackendEndpoint.DOCUMENT_DOWNLOAD.value].get("query_params", {})
+                context["document"] = await buddy_service.download_document(
+                    token=token,
+                    fileId=params.get("fileId"),
+                )
+            except BackendAPIError as exc:
+                context["errors"].append(f"document_error: {exc.status_code} {exc.detail}")        
+        
         return context
 
 
