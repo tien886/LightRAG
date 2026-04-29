@@ -2,7 +2,36 @@
   "permissions": {
     "allow": [
       "Edit(/.claude/skills/lightrag/**)",
-      "Edit(/.claude/skills/backend/**)"
+      "Edit(/.claude/skills/backend/**)",
+      "Edit(/rag/**)",
+      "Edit(/service/rag/**)",
+      "Edit(/controller/**)",
+      "Edit(/dto/rag.py)",
+      "Edit(/client/rag_client.py)",
+      "Edit(/config/rag_config.py)",
+      "Edit(/podman-compose.yml)",
+      "Edit(/Makefile)",
+      "Edit(/.env.example)",
+      "Edit(/requirements.txt)",
+      "Bash(podman-compose -f podman-compose.yml *)",
+      "Bash(podman *)",
+      "Bash(.venv/Scripts/python *)",
+      "Bash(.venv/Scripts/pip *)",
+      "Bash(.venv/Scripts/pytest *)",
+      "Bash(dir /b \"e:\\\\UIT_SPRING2025-2026\\\\a_guide_to_RAG\\\\LightRAG\\\\service\")",
+      "Bash(dir /s /b \"e:\\\\UIT_SPRING2025-2026\\\\a_guide_to_RAG\\\\LightRAG\\\\service\\\\llm\")",
+      "Bash(dir /s /b \"e:\\\\UIT_SPRING2025-2026\\\\a_guide_to_RAG\\\\LightRAG\\\\service\\\\routing\")",
+      "Bash(dir \"e:\\\\UIT_SPRING2025-2026\\\\a_guide_to_RAG\\\\LightRAG\\\\service\\\\llm\\\\__init__.py\")",
+      "Bash(dir \"e:\\\\UIT_SPRING2025-2026\\\\a_guide_to_RAG\\\\LightRAG\\\\service\\\\__init__.py\")",
+      "Bash(xargs ls *)",
+      "Bash(python -m py_compile tests/conftest.py tests/test_backend_api.py tests/test_kg.py tests/test_decision_gate.py tests/test_api_endpoints.py)",
+      "Bash(python -c \"import lightrag; import inspect; print\\(inspect.signature\\(lightrag.LightRAG.__init__\\)\\)\")",
+      "Bash(python -c \"import lightrag; import inspect; print\\(inspect.signature\\(lightrag.QueryParam\\)\\)\")",
+      "Bash(python -c \"import rag.rag; print\\('rag.rag import OK'\\)\")",
+      "Bash(python -c \"import lightrag; print\\(lightrag.__file__\\)\")",
+      "Read(//c/Users/votie/AppData/Local/Programs/Python/Python311/Lib/site-packages/lightrag/**)",
+      "Bash(python -c \"import rag.rag; print\\('rag.rag OK'\\)\")",
+      "Bash(python -c \"from client.rag_client import get_llm_func, get_embedding_func; print\\('OK — no SDK imports, pure httpx'\\)\")"
     ]
   }
 }
